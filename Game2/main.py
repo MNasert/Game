@@ -87,7 +87,9 @@ def main():
         start_time = time.time()
         clock.tick(simspeed)
         if not pause:
-            update_frame(entitylist)
+            update = threading.Thread(target=update_frame, args=[entitylist], daemon=True)
+            update.start()
+            update.join()
         screen.blit(background, (0, 0))
         render_frame(entitylist, screen)
 
@@ -172,6 +174,7 @@ def main():
         screen.blit(txt_surface_5, (1840, 140))
         screen.blit(txt_surface_6, (1680, 10))
         pygame.display.update()
+
 game=threading.Thread(target=main, daemon=True)
 game.start()
 game.join()
