@@ -1,4 +1,5 @@
 from pygame import *
+import numpy as np
 import random
 from Game2.entities.bullet import Bullet
 class Unit:
@@ -6,6 +7,7 @@ class Unit:
         self.is_unit = True
         self.is_projectile = False
         self.is_active = True
+        self.is_alive = True
         self.spd = spd
         self.unit_spd = unit_spd
         self.firerate = firerate
@@ -23,6 +25,7 @@ class Unit:
         self.xmov = 0
         self.ymov = 0
         self.team = team
+        self.angle = 0
         self.targpos = []
         self.timer = 0
         self.movtimer = 0
@@ -40,6 +43,7 @@ class Unit:
         if self.dist_to_enemy > self.rng*.25 and self.targpos:
             self.xmov = self.targpos[0] - self.x
             self.ymov = self.targpos[1] - self.y
+            convert = 180 / np.pi
 
             if abs(self.xmov) > abs(self.ymov):
                 self.ymov = self.ymov / abs(self.xmov)
@@ -52,6 +56,12 @@ class Unit:
             if abs(self.xmov) == abs(self.ymov):
                 self.xmov = 1 if self.xmov > 0 else -1
                 self.ymov = 1 if self.ymov > 0 else -1
+
+            if self.targpos[0] - self.x < 0:
+                self.angle = -(180 + (np.arctan((self.targpos[1] - self.y)/(self.targpos[0] - self.x)) * convert))
+            else:
+                self.angle = -np.arctan((self.targpos[1] - self.y)/(self.targpos[0] - self.x)) * convert
+
         else:
             self.xmov = 0
             self.ymov = 0
@@ -60,7 +70,7 @@ class Unit:
             self.x += self.xmov*self.unit_spd
             self.y += self.ymov*self.unit_spd
 
-        if self.timer <= 0:
+        if self.timer <= 0 and self.targpos:
             ret = self.fire()
             self.timer = self.firerate + int(10 * random.random())
             return ret

@@ -1,13 +1,15 @@
 from pygame import *
+import numpy as np
 import random
 class Bullet:
-    def __init__(self, x, y, img, dmg, targx, targy, spd, team, MAXDIST, death_img):
+    def __init__(self, x, y, img, dmg, targx, targy, spd, team, MAXDIST, death_img, hp=1):
         self.is_unit = False
         self.is_projectile = True
         self.is_active = True
+        self.is_alive = True
         self.MAXDIST = MAXDIST
         self.start_x = x
-        self.hp = 1
+        self.hp = hp
         self.x = x
         self.team = team
         self.start_y = y
@@ -16,6 +18,7 @@ class Bullet:
         self.rect = [self.img.get_width(), self.img.get_height()]
         self.dmg = dmg
         self.death_img = death_img
+        self.angle = 0
         spd_y = targy - self.start_y
         spd_x = targx - self.start_x
 
@@ -33,6 +36,10 @@ class Bullet:
 
         self.spd_x = spd_x * spd + .25*(.5-random.random())
         self.spd_y = spd_y * spd + .25*(.5-random.random())
+        if targx - self.x < 0:
+            self.angle = -(180 + (np.arctan((targy - self.y) / (targx - self.x)) * 180/np.pi))
+        elif targx - self.x > 0:
+            self.angle = -np.arctan((targy - self.y) / (targx - self.x)) * 180/np.pi
 
     def update(self):
         self.x += self.spd_x
@@ -46,3 +53,4 @@ class Bullet:
         upper_left = (self.x, self.y)
         lower_right = (self.x + self.rect[0], self.y + self.rect[1])
         return [upper_left, lower_right]
+

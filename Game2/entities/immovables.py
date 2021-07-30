@@ -6,6 +6,7 @@ class Starbase:
         self.is_unit = True
         self.is_projectile = False
         self.is_active = True
+        self.is_alive = True
         self.spd = spd
         self.firerate = firerate
         self.projectile = projectile
@@ -21,6 +22,7 @@ class Starbase:
         self.rng = rng
         self.team = team
         self.targpos = []
+        self.angle = 0
         self.timer = 0
 
     def fire(self):
